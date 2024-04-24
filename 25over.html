@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25 Over</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Traffic Data</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="25over.html">25mph or more over</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="app" class="container mt-4">
+    <h1>Tickets for 25mph Over the Limit</h1>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>Ticket ID</th>
+            <th>Time</th>
+            <th>Posted Speed</th>
+            <th>MPH Over</th>
+            <th>Violator Sex</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="ticket in tickets" :key="ticket.tid">
+            <td>{{ ticket.tid }}</td>
+            <td>{{ ticket.stop_time }}</td>
+            <td>{{ ticket.posted_speed }}</td>
+            <td>{{ ticket.actual_speed - ticket.posted_speed }}</td>
+            <td>{{ ticket.violator_sex }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+new Vue({
+    el: '#app',
+    data: {
+        tickets: []
+    },
+    methods: {
+        fetchTickets() {
+            fetch('https://raw.githubusercontent.com/tfeatheringill0001/tickets1/main/tickets1.json')
+                .then(response => response.json())
+                .then(data => {
+                    this.tickets = data.filter(ticket => ticket.actual_speed - ticket.posted_speed > 25);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    },
+    mounted() {
+        this.fetchTickets();
+    }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
